@@ -36,7 +36,7 @@ router.get("/7day", (req, res)=>{
       res.send("Method GET in user.ts with" + id);
   }else{
     const sql = 
-    "SELECT vote.rating, image.* FROM vote JOIN image ON vote.mid = image.mid WHERE vote.date >= DATE_SUB(CURRENT_DATE(), INTERVAL 6 DAY) ORDER BY vote.rating DESC;"
+    "SELECT vote.rating, image.* FROM vote JOIN image ON vote.mid = image.mid WHERE vote.date >= DATE_SUB(CURRENT_DATE(), INTERVAL 7 DAY) ORDER BY vote.rating DESC;"
     ;
     conn.query(sql, (err,result)=>{
       if (err) {

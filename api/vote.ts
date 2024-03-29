@@ -152,11 +152,13 @@ function calculateEloRatingA(ra: number, rb: number): number {
     const expectedScoreA = 1 / (1 + Math.pow(10, (rb - ra) / 400));
     return kFactor * (1 - expectedScoreA);
 }
+
 function calculateEloRatingB(ra: number, rb: number): number {
     const kFactor = 32;
-    const expectedScoreA = 1 / (1 + Math.pow(10, (ra - rb) / 400));
-    return kFactor * (1 - expectedScoreA);
+    const expectedScoreB = 1 / (1 + Math.pow(10, (ra - rb) / 400));
+    return kFactor * expectedScoreB;
 }
+
 
 // นับโหวตและส่งข้อมูลเกี่ยวกับ Elo rating ไปยังหน้า HTML
 router.get("/voteData", (req, res) => {

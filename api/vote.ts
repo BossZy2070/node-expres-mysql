@@ -157,3 +157,29 @@ function calculateEloRatingB(ra: number, rb: number): number {
     const expectedScoreA = 1 / (1 + Math.pow(10, (ra - rb) / 400));
     return kFactor * (1 - expectedScoreA);
 }
+
+// นับโหวตและส่งข้อมูลเกี่ยวกับ Elo rating ไปยังหน้า HTML
+router.get("/voteData", (req, res) => {
+    const id = req.query.mid as string;
+
+    // ดึงค่าปัจจุบันของ vote_count และ rating จากฐานข้อมูล
+    const getSql = "SELECT vote_count, rating FROM vote WHERE mid = ?";
+    conn.query(getSql, [id], (err, result) => {
+        if (err) {
+            res.status(400).json(err);
+        } else {
+            if (result.length > 0) {
+                const currentVoteCount = result[0].vote_count;
+                const currentRating = result[0].rating;
+
+                // ส่งข้อมูล vote count และ rating กลับไปยังหน้า HTML
+                res.json({ 
+                    voteCount: currentVoteCount,
+                    rating: currentRating
+                });
+            } else {
+                res.status(404).json({ message: "Image not found" });
+            }
+        }
+    });
+});

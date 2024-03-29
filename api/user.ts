@@ -73,40 +73,31 @@ router.post("/add", (req, res) => {
         if (err) {
             res.status(400).json({ status: false, message: "Login Failed", error: err });
         } else {
-            res.json(result);
+            if (result.length > 0) {
+                // พบข้อมูลผู้ใช้งานที่ตรงกับเงื่อนไขที่ระบุ
+                res.json(result);
+            } else {
+                // ไม่พบข้อมูลผู้ใช้งานที่ตรงกับเงื่อนไขที่ระบุ
+                res.status(401).json({ status: false, message: "Invalid email or password. Please try again." });
+            }
         }
     });
 });
 
-// // POST /user
-// router.post("/", (req, res)=>{
-//     let body = req.body; 
-//     res.send("Get in user.ts body: " + JSON.stringify(body));
+router.post("/update", (req, res) => {
+  const { user, email, password, profile } = req.body; // รับค่า id จาก body ไม่ใช่จาก query parameters
+  const uid = req.query.id;
+  
+  const sql = "UPDATE user SET user=?, email=?, password=?, profile=? WHERE uid=?";
 
-// });
+  conn.query(sql, [user, email, password, profile, uid], (err, result) => {
+    if (err) {
+      console.error("เกิดข้อผิดพลาดในการอัปเดตผู้ใช้:", err);
+      res.status(500).json({ status: false, message: "เกิดข้อผิดพลาดในการอัปเดตผู้ใช้" });
+    } else {
+      console.log("อัปเดตผู้ใช้เรียบร้อยแล้ว");
+      res.json({ status: true, message: "อัปเดตผู้ใช้เรียบร้อยแล้ว" });
+    }
+  });
+});
 
-// router.get("/search/fields", (req, res)=>{
-//     const id = req.query.id;
-//     // conts name = req,query.name;
-//     const sql = "select * from user where "+" (idx IS NULL OR idx = ?) OR (name IS NULL OR name like ?)";
-//     conn.query(sql, [id, "s", name, "s"], (err, result)=>{
-//         if (err) {
-//             res.json(err);
-//         } else {
-//             res.json(result);
-//         }
-//     })
-// });
-
-// router.get("/search/mon", (req, res)=>{
-//     const id =req.query.id;
-//     const price = req.query.price;
-//     const sql = "select * from user where "+" (idx IS NULL OR idx = ?) OR (name IS NULL OR name like ?)";
-//     conn.query(sql, [id, "s", name, "s",price], (err, result)=>{
-//         if (err) {
-//             res.json(err);
-//         } else {
-//             res.json(result);
-//         }
-//     })
-// });

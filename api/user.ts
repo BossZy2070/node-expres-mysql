@@ -84,25 +84,43 @@ router.post("/add", (req, res) => {
     });
 });
 
-router.post("/update", (req, res) => {
+router.post("/edit", (req, res) => {
   let details = {
+    uid: req.body.uid,
     user: req.body.user,
     email: req.body.email,
     password: req.body.password,
     profile: req.body.profile,
-    uid: req.body.uid,
-};
-  const sql = "UPDATE user SET user=?, email=?, password=?, profile=? WHERE uid=?";
+  } as { [key: string]: any };
 
-  conn.query(sql, details, (err, result) => {
-    if (err) {
-      console.error("เกิดข้อผิดพลาดในการอัปเดตผู้ใช้:", err);
-      res.status(500).json({ status: false, message: "เกิดข้อผิดพลาดในการอัปเดตผู้ใช้" });
+  let condition = { uid: details.uid }; // เปลี่ยนเป็นเงื่อนไขที่ต้องการในการ update
+
+  let sql = "UPDATE user SET";
+  let updates = [];
+  for (const key in details) {
+    if (details.hasOwnProperty(key)) {
+      if (details[key] !== null && details[key] !== undefined && details[key] !== "") {
+        updates.push(`${key} = '${details[key]}'`);
+      }
+      
+    }
+  }
+  sql += " " + updates.join(", ") + " WHERE ?";
+
+  conn.query(sql, [condition], (error, results) => {
+    if (error) {
+      res.send({ status: false, message: "Update failed", error: error });
     } else {
-      console.log("อัปเดตผู้ใช้เรียบร้อยแล้ว");
-      res.json({ status: true, message: "อัปเดตผู้ใช้เรียบร้อยแล้ว" });
-      res.json(result);
+      // res.send({ status: true, message: "Update successfully", data: results });
+      const sql = "SELECT * FROM user WHERE user_type = ? AND uid = ?";
+
+      conn.query(sql, ["user", details.uid], (error, result) => {
+          if (error) {
+              res.status(400).json({ status: false, message: "Cuss eid", error: error });
+          } else {
+              res.json(result);
+          }
+      });
     }
   });
 });
-

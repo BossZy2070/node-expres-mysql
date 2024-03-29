@@ -149,15 +149,16 @@ router.put("/", (req, res) => {
 
 function calculateEloRatingA(ra: number, rb: number): number {
     const kFactor = 32;
-    const expectedScoreA = 1 / (1 + Math.pow(10, (rb - ra) / 400));
-    return kFactor * (1 - expectedScoreA);
+    const expectedScoreB = 1 / (1 + Math.pow(10, (rb - ra) / 400));
+    return kFactor * (1 - expectedScoreB); // ใช้ expectedScoreB ในการคำนวณ Elo rating ของฝ่าย A
 }
 
 function calculateEloRatingB(ra: number, rb: number): number {
     const kFactor = 32;
-    const expectedScoreB = 1 / (1 + Math.pow(10, (ra - rb) / 400));
-    return kFactor * expectedScoreB;
+    const expectedScoreA = 1 / (1 + Math.pow(10, (ra - rb) / 400));
+    return kFactor * expectedScoreA; // ใช้ expectedScoreA ในการคำนวณ Elo rating ของฝ่าย B
 }
+
 
 
 // นับโหวตและส่งข้อมูลเกี่ยวกับ Elo rating ไปยังหน้า HTML

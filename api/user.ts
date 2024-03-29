@@ -85,18 +85,23 @@ router.post("/add", (req, res) => {
 });
 
 router.post("/update", (req, res) => {
-  const { user, email, password, profile } = req.body; // รับค่า id จาก body ไม่ใช่จาก query parameters
-  const uid = req.query.id;
-  
+  let details = {
+    user: req.body.user,
+    email: req.body.email,
+    password: req.body.password,
+    profile: req.body.profile,
+    uid: req.body.uid,
+};
   const sql = "UPDATE user SET user=?, email=?, password=?, profile=? WHERE uid=?";
 
-  conn.query(sql, [user, email, password, profile, uid], (err, result) => {
+  conn.query(sql, details.uid, (err, result) => {
     if (err) {
       console.error("เกิดข้อผิดพลาดในการอัปเดตผู้ใช้:", err);
       res.status(500).json({ status: false, message: "เกิดข้อผิดพลาดในการอัปเดตผู้ใช้" });
     } else {
       console.log("อัปเดตผู้ใช้เรียบร้อยแล้ว");
       res.json({ status: true, message: "อัปเดตผู้ใช้เรียบร้อยแล้ว" });
+      res.json(result);
     }
   });
 });

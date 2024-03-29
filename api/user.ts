@@ -94,7 +94,7 @@ router.post("/update", (req, res) => {
 };
   const sql = "UPDATE user SET user=?, email=?, password=?, profile=? WHERE uid=?";
 
-  conn.query(sql, details.uid, (err, result) => {
+  conn.query(sql, details, (err, result) => {
     if (err) {
       console.error("เกิดข้อผิดพลาดในการอัปเดตผู้ใช้:", err);
       res.status(500).json({ status: false, message: "เกิดข้อผิดพลาดในการอัปเดตผู้ใช้" });
